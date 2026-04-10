@@ -42,9 +42,3 @@ A full-stack web application built with the MERN stack for conducting online qui
    cd frontend
    npm start
 ```
-
-## 🌐 Live Demo
-[Click here](https://your-app-link.com)
-
-## 👤 Author
-Your Name — Marwadi University
