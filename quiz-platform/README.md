@@ -17,7 +17,11 @@ cd backend
 npm install
 npm run dev
 ```
+<<<<<<< HEAD
 Backend starts at: https://online-quiz-backend-wcf9.onrender.com
+=======
+Backend starts at: http://localhost:5000
+>>>>>>> 65d197bad559f256dc1125a701dafd746c3b6950
 
 ### Step 3 — Run the Frontend
 Open a second terminal in VS Code and run:
