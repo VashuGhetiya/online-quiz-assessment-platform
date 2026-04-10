@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import API_BASE_URL from '../config';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/results/my').then(r => setResults(r.data)).catch(() => {});
+    axios.get(`${API_BASE_URL}/api/results/my`).then(r => setResults(r.data)).catch(() => {});
   }, []);
 
   const avg = results.length
@@ -22,7 +23,6 @@ export default function Dashboard() {
         Role: {user.role} &nbsp;|&nbsp; Email: {user.email}
       </p>
 
-      {/* Stats */}
       <div className="stats">
         <div className="stat-box">
           <div className="num">{results.length}</div>
@@ -40,7 +40,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Quick links */}
       <div className="flex-row mb-16">
         <Link to="/quizzes"><button className="btn-blue">Take a Quiz</button></Link>
         <Link to="/my-results"><button className="btn-gray">My Results</button></Link>
@@ -49,7 +48,6 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Recent results */}
       <h3 style={{ marginBottom: 12 }}>Recent Results</h3>
       {results.length === 0 ? (
         <div className="card">

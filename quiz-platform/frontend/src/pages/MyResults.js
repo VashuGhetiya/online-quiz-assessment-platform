@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../config';
 
 export default function MyResults() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/api/results/my')
+    axios.get(`${API_BASE_URL}/api/results/my`)
       .then(r => setResults(r.data))
       .finally(() => setLoading(false));
   }, []);

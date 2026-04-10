@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../config';
 
 export default function QuizList() {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/api/quizzes')
+    axios.get(`${API_BASE_URL}/api/quizzes`)
       .then(r => setQuizzes(r.data))
       .finally(() => setLoading(false));
   }, []);

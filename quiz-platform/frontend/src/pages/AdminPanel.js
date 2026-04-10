@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../config';
 
 export default function AdminPanel() {
   const [quizzes, setQuizzes] = useState([]);
   const [results, setResults] = useState([]);
-  const [tab, setTab] = useState('quizzes'); // 'quizzes' or 'results'
+  const [tab, setTab] = useState('quizzes');
 
   const loadData = () => {
-    axios.get('/api/quizzes/admin/list').then(r => setQuizzes(r.data)).catch(() => {});
-    axios.get('/api/results').then(r => setResults(r.data)).catch(() => {});
+    axios.get(`${API_BASE_URL}/api/quizzes/admin/list`).then(r => setQuizzes(r.data)).catch(() => {});
+    axios.get(`${API_BASE_URL}/api/results`).then(r => setResults(r.data)).catch(() => {});
   };
 
   useEffect(() => { loadData(); }, []);
 
   const deleteQuiz = async (id) => {
     if (!window.confirm('Are you sure you want to delete this quiz?')) return;
-    await axios.delete('/api/quizzes/' + id);
+    await axios.delete(`${API_BASE_URL}/api/quizzes/` + id);
     loadData();
   };
 
   const toggleActive = async (quiz) => {
-    await axios.put('/api/quizzes/' + quiz._id, { isActive: !quiz.isActive });
+    await axios.put(`${API_BASE_URL}/api/quizzes/` + quiz._id, { isActive: !quiz.isActive });
     loadData();
   };
 
@@ -33,8 +34,6 @@ export default function AdminPanel() {
           <button className="btn-green">+ Create New Quiz</button>
         </Link>
       </div>
-
-      {/* Summary stats */}
       <div className="stats">
         <div className="stat-box">
           <div className="num">{quizzes.length}</div>
@@ -53,40 +52,18 @@ export default function AdminPanel() {
           <div className="lbl">Overall Avg Score</div>
         </div>
       </div>
-
-      {/* Tabs */}
       <div className="flex-row mb-16">
-        <button
-          className={tab === 'quizzes' ? 'btn-blue' : 'btn-gray'}
-          onClick={() => setTab('quizzes')}
-        >
-          Quizzes
-        </button>
-        <button
-          className={tab === 'results' ? 'btn-blue' : 'btn-gray'}
-          onClick={() => setTab('results')}
-        >
-          All Submissions
-        </button>
+        <button className={tab === 'quizzes' ? 'btn-blue' : 'btn-gray'} onClick={() => setTab('quizzes')}>Quizzes</button>
+        <button className={tab === 'results' ? 'btn-blue' : 'btn-gray'} onClick={() => setTab('results')}>All Submissions</button>
       </div>
-
-      {/* Quizzes tab */}
       {tab === 'quizzes' && (
         <>
           {quizzes.length === 0 ? (
-            <div className="card">
-              <p className="text-gray">No quizzes yet. <Link to="/admin/create">Create one →</Link></p>
-            </div>
+            <div className="card"><p className="text-gray">No quizzes yet. <Link to="/admin/create">Create one →</Link></p></div>
           ) : (
             <table>
               <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Questions</th>
-                  <th>Time Limit</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
+                <tr><th>Title</th><th>Questions</th><th>Time Limit</th><th>Status</th><th>Actions</th></tr>
               </thead>
               <tbody>
                 {quizzes.map(q => (
@@ -94,30 +71,12 @@ export default function AdminPanel() {
                     <td>{q.title}</td>
                     <td>{q.questions.length}</td>
                     <td>{q.timeLimit} min</td>
-                    <td>
-                      <span className={`badge ${q.isActive ? 'badge-green' : 'badge-red'}`}>
-                        {q.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
+                    <td><span className={`badge ${q.isActive ? 'badge-green' : 'badge-red'}`}>{q.isActive ? 'Active' : 'Inactive'}</span></td>
                     <td>
                       <div className="flex-row">
-                        <Link to={`/admin/edit/${q._id}`}>
-                          <button className="btn-blue" style={{ padding: '5px 10px', fontSize: 12 }}>Edit</button>
-                        </Link>
-                        <button
-                          className="btn-orange"
-                          style={{ padding: '5px 10px', fontSize: 12 }}
-                          onClick={() => toggleActive(q)}
-                        >
-                          {q.isActive ? 'Deactivate' : 'Activate'}
-                        </button>
-                        <button
-                          className="btn-red"
-                          style={{ padding: '5px 10px', fontSize: 12 }}
-                          onClick={() => deleteQuiz(q._id)}
-                        >
-                          Delete
-                        </button>
+                        <Link to={`/admin/edit/${q._id}`}><button className="btn-blue" style={{ padding: '5px 10px', fontSize: 12 }}>Edit</button></Link>
+                        <button className="btn-orange" style={{ padding: '5px 10px', fontSize: 12 }} onClick={() => toggleActive(q)}>{q.isActive ? 'Deactivate' : 'Activate'}</button>
+                        <button className="btn-red" style={{ padding: '5px 10px', fontSize: 12 }} onClick={() => deleteQuiz(q._id)}>Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -127,8 +86,6 @@ export default function AdminPanel() {
           )}
         </>
       )}
-
-      {/* Results tab */}
       {tab === 'results' && (
         <>
           {results.length === 0 ? (
@@ -136,14 +93,7 @@ export default function AdminPanel() {
           ) : (
             <table>
               <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Email</th>
-                  <th>Quiz</th>
-                  <th>Score</th>
-                  <th>Result</th>
-                  <th>Date</th>
-                </tr>
+                <tr><th>Student</th><th>Email</th><th>Quiz</th><th>Score</th><th>Result</th><th>Date</th></tr>
               </thead>
               <tbody>
                 {results.map(r => (
@@ -152,11 +102,7 @@ export default function AdminPanel() {
                     <td>{r.student?.email}</td>
                     <td>{r.quiz?.title}</td>
                     <td>{r.score} / {r.total} ({r.percentage}%)</td>
-                    <td>
-                      <span className={`badge ${r.percentage >= 50 ? 'badge-green' : 'badge-red'}`}>
-                        {r.percentage >= 50 ? 'Pass' : 'Fail'}
-                      </span>
-                    </td>
+                    <td><span className={`badge ${r.percentage >= 50 ? 'badge-green' : 'badge-red'}`}>{r.percentage >= 50 ? 'Pass' : 'Fail'}</span></td>
                     <td>{new Date(r.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))}
